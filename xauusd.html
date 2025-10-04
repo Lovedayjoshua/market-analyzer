@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>XAUUSD Live Analyzer</title>
+  <style>
+    body {
+      display: flex;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #1b1b1b;
+      color: #f0f0f0;
+    }
+    #tradingview {
+      flex: 1;
+      height: 100vh;
+    }
+    #analyzer {
+      flex: 1;
+      background: #121212;
+      box-shadow: -2px 0px 5px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #333;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      background: #1b1b1b;
+      color: #f0f0f0;
+      transition: all 0.3s ease;
+    }
+    .tab.active {
+      background: #121212;
+      border-bottom: 2px solid #00bfff;
+      color: #00bfff;
+    }
+    .content {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .box {
+      border: 1px solid #333;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      background: #1e1e1e;
+    }
+    #news-categories {
+      margin: 10px 0;
+      text-align: center;
+    }
+    #news-categories button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #00bfff;
+      color: #121212;
+      transition: 0.3s;
+    }
+    #news-categories button:hover {
+      background: #009acd;
+    }
+    #news-categories button.active {
+      background: #006f9a;
+      color: #fff;
+    }
+    #news-list {
+      list-style: none;
+      padding: 0;
+    }
+    #news-list li {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    #news-list a {
+      color: #00bfff;
+      text-decoration: none;
+    }
+    #news-list a:hover {
+      text-decoration: underline;
+    }
+    h3 {
+      color: #00bfff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TradingView Chart (Dark Theme) -->
+  <div id="tradingview">
+    <iframe 
+      src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=OANDA:XAUUSD&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1" 
+      width="100%" 
+      height="100%" 
+      frameborder="0">
+    </iframe>
+  </div>
+
+  <!-- Analyzer + News -->
+  <div id="analyzer">
+    <!-- Tabs -->
+    <div class="tabs">
+      <div id="tab-analysis" class="tab active">Analysis</div>
+      <div id="tab-news" class="tab">News</div>
+    </div>
+    
+    <!-- Analysis Content -->
+    <div class="content" id="analysis-content">
+      <div class="box"><h3>Candlestick Patterns</h3><p>Waiting for live data...</p></div>
+      <div class="box"><h3>RSI</h3><p>Loading...</p></div>
+      <div class="box"><h3>MACD</h3><p>Loading...</p></div>
+      <div class="box"><h3>Fibonacci Retracement</h3><p>Loading...</p></div>
+    </div>
+    
+    <!-- News Content -->
+    <div class="content" id="news-content" style="display:none;">
+      <div class="box">
+        <h3>📺 Live Market News</h3>
+        <iframe 
+          src="https://www.youtube.com/embed/9No-FiEInLA?autoplay=1&mute=1" 
+          width="100%" 
+          height="250" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+      </div>
+      
+      <div id="news-categories">
+        <button onclick="loadNews('gold')" class="active">XAUUSD</button>
+        <button onclick="loadNews('oil')">USOIL</button>
+        <button onclick="loadNews('dow jones')">US30</button>
+      </div>
+      
+      <div class="box">
+        <h3>📰 Latest Headlines</h3>
+        <ul id="news-list"><li>Loading news...</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tabs switching
+    const tabAnalysis = document.getElementById("tab-analysis");
+    const tabNews = document.getElementById("tab-news");
+    const analysisContent = document.getElementById("analysis-content");
+    const newsContent = document.getElementById("news-content");
