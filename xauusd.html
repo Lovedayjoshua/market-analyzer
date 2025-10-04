@@ -2,103 +2,114 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>XAUUSD Live Analyzer</title>
+  <title>XAUUSD | USOIL | US30 Live Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      display: flex;
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #1b1b1b;
+      background: #121212;
       color: #f0f0f0;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
     }
+
     #tradingview {
       flex: 1;
       height: 100vh;
     }
+
     #analyzer {
       flex: 1;
-      background: #121212;
-      box-shadow: -2px 0px 5px rgba(0,0,0,0.5);
+      background: #1e1e1e;
+      box-shadow: -2px 0px 5px rgba(0,0,0,0.3);
       display: flex;
       flex-direction: column;
     }
+
     .tabs {
       display: flex;
-      border-bottom: 2px solid #333;
+      border-bottom: 2px solid #444;
     }
+
     .tab {
       flex: 1;
       text-align: center;
       padding: 12px;
       cursor: pointer;
       font-weight: bold;
-      background: #1b1b1b;
+      background: #2a2a2a;
       color: #f0f0f0;
-      transition: all 0.3s ease;
     }
+
     .tab.active {
-      background: #121212;
+      background: #1e1e1e;
       border-bottom: 2px solid #00bfff;
       color: #00bfff;
     }
+
     .content {
       flex: 1;
       padding: 15px;
       overflow-y: auto;
     }
+
     .box {
-      border: 1px solid #333;
+      border: 1px solid #444;
       margin-bottom: 12px;
       padding: 10px;
       border-radius: 6px;
-      background: #1e1e1e;
+      background: #2a2a2a;
+      color: #f0f0f0;
     }
-    #news-categories {
-      margin: 10px 0;
-      text-align: center;
-    }
+
     #news-categories button {
       margin: 5px;
       padding: 8px 12px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      background: #00bfff;
-      color: #121212;
-      transition: 0.3s;
+      background: #0077cc;
+      color: white;
     }
-    #news-categories button:hover {
-      background: #009acd;
-    }
+
     #news-categories button.active {
-      background: #006f9a;
-      color: #fff;
+      background: #005fa3;
     }
+
     #news-list {
       list-style: none;
       padding: 0;
     }
+
     #news-list li {
       margin-bottom: 10px;
       font-size: 14px;
     }
+
     #news-list a {
       color: #00bfff;
       text-decoration: none;
     }
-    #news-list a:hover {
-      text-decoration: underline;
-    }
-    h3 {
-      color: #00bfff;
+
+    @media (max-width: 900px) {
+      body {
+        flex-direction: column;
+      }
+      #tradingview, #analyzer {
+        height: 50vh;
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- TradingView Chart (Dark Theme) -->
+  <!-- TradingView Chart -->
   <div id="tradingview">
     <iframe 
+      id="tv-iframe"
       src="https://s.tradingview.com/widgetembed/?frameElementId=tradingview_widget&symbol=OANDA:XAUUSD&interval=15&hidesidetoolbar=1&symboledit=1&saveimage=0&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1" 
       width="100%" 
       height="100%" 
@@ -108,13 +119,11 @@
 
   <!-- Analyzer + News -->
   <div id="analyzer">
-    <!-- Tabs -->
     <div class="tabs">
       <div id="tab-analysis" class="tab active">Analysis</div>
       <div id="tab-news" class="tab">News</div>
     </div>
     
-    <!-- Analysis Content -->
     <div class="content" id="analysis-content">
       <div class="box"><h3>Candlestick Patterns</h3><p>Waiting for live data...</p></div>
       <div class="box"><h3>RSI</h3><p>Loading...</p></div>
@@ -122,14 +131,13 @@
       <div class="box"><h3>Fibonacci Retracement</h3><p>Loading...</p></div>
     </div>
     
-    <!-- News Content -->
     <div class="content" id="news-content" style="display:none;">
       <div class="box">
-        <h3>📺 Live Market News</h3>
+        <h3>Live Market News</h3>
         <iframe 
           src="https://www.youtube.com/embed/9No-FiEInLA?autoplay=1&mute=1" 
           width="100%" 
-          height="250" 
+          height="200" 
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
           allowfullscreen>
         </iframe>
@@ -142,7 +150,7 @@
       </div>
       
       <div class="box">
-        <h3>📰 Latest Headlines</h3>
+        <h3>Latest Headlines</h3>
         <ul id="news-list"><li>Loading news...</li></ul>
       </div>
     </div>
@@ -154,3 +162,56 @@
     const tabNews = document.getElementById("tab-news");
     const analysisContent = document.getElementById("analysis-content");
     const newsContent = document.getElementById("news-content");
+
+    tabAnalysis.addEventListener("click", () => {
+      tabAnalysis.classList.add("active");
+      tabNews.classList.remove("active");
+      analysisContent.style.display = "block";
+      newsContent.style.display = "none";
+    });
+
+    tabNews.addEventListener("click", () => {
+      tabNews.classList.add("active");
+      tabAnalysis.classList.remove("active");
+      newsContent.style.display = "block";
+      analysisContent.style.display = "none";
+    });
+
+    // News API
+    const apiKey = "bb253d473fac498ea5425f902eebafb4";
+
+    async function loadNews(query) {
+      try {
+        const url = https://newsapi.org/v2/everything?q=${query}&language=en&sortBy=publishedAt&pageSize=5&apiKey=${apiKey};
+        const res = await fetch(url);
+        const data = await res.json();
+        const newsList = document.getElementById("news-list");
+        newsList.innerHTML = "";
+
+        if (data.articles && data.articles.length > 0) {
+          data.articles.forEach(article => {
+            const li = document.createElement("li");
+            li.innerHTML = <a href="${article.url}" target="_blank">${article.title}</a>;
+            newsList.appendChild(li);
+          });
+        } else {
+          newsList.innerHTML = "<li>No recent news available</li>";
+        }
+
+        document.querySelectorAll("#news-categories button").forEach(btn => btn.classList.remove("active"));
+        [...document.querySelectorAll("#news-categories button")]
+          .find(b => b.innerText.toLowerCase().includes(query.split(" ")[0]))
+          .classList.add("active");
+
+      } catch (error) {
+        console.error("Error fetching news:", error);
+        document.getElementById("news-list").innerHTML = "<li>Failed to load news.</li>";
+      }
+    }
+
+    // Load default news
+    loadNews("gold");
+  </script>
+
+</body>
+</html>

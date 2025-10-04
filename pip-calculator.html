@@ -1,0 +1,149 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pip Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1e1e1e;
+      width: 100%;
+      padding: 15px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffcc00;
+    }
+
+    h1 {
+      color: #ffcc00;
+      margin-top: 20px;
+    }
+
+    .calculator {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      width: 340px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input, select {
+      background: #333;
+      color: white;
+    }
+
+    button {
+      background: #ffcc00;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #e6b800;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ff99;
+    }
+  </style>
+</head>
+<body>
+  <header>💹 Pip Calculator</header>
+
+  <h1>Forex & Indices Pip Calculator</h1>
+
+  <div class="calculator">
+    <label for="pair">Select Instrument:</label>
+    <select id="pair">
+      <option value="EURUSD">EURUSD</option>
+      <option value="GBPUSD">GBPUSD</option>
+      <option value="USDJPY">USDJPY</option>
+      <option value="XAUUSD">XAUUSD (Gold)</option>
+      <option value="US30">US30 (Dow Jones)</option>
+    </select>
+
+    <label for="lot">Lot Size:</label>
+    <input type="number" id="lot" value="0.1" step="0.01">
+
+    <label for="entry">Entry Price:</label>
+    <input type="number" id="entry" value="1.1000" step="0.0001">
+
+    <label for="exit">Exit Price:</label>
+    <input type="number" id="exit" value="1.1050" step="0.0001">
+
+    <button onclick="calculatePip()">Calculate</button>
+
+    <div class="result" id="result">Enter details and click calculate.</div>
+  </div>
+
+  <script>
+    function calculatePip() {
+      let pair = document.getElementById("pair").value;
+      let lot = parseFloat(document.getElementById("lot").value);
+      let entry = parseFloat(document.getElementById("entry").value);
+      let exit = parseFloat(document.getElementById("exit").value);
+
+      let pipValue = 0;
+      let pipSize = 0.0001; // default forex
+      if (pair.includes("JPY")) pipSize = 0.01;
+      if (pair === "XAUUSD") pipSize = 0.1;   // gold
+      if (pair === "US30") pipSize = 1;       // indices
+
+      let contractSize = 100000; // forex standard
+      if (pair === "XAUUSD") contractSize = 100; // gold: 100 oz
+      if (pair === "US30") contractSize = 1;     // indices
+
+      // Value of 1 pip
+      pipValue = (pipSize / entry) * contractSize * lot;
+
+      // Pips gained/lost
+      let pipDifference = Math.abs(exit - entry) / pipSize;
+
+      // Profit or Loss in $
+      let profitLoss = pipDifference * pipValue;
+
+      document.getElementById("result").innerText =
+        "1 pip = $" + pipValue.toFixed(2) + 
+        "\nPip difference = " + pipDifference.toFixed(1) + " pips" +
+        "\nProfit/Loss = $" + profitLoss.toFixed(2);
+    }
+  </script>
+</body>
+</html>
+```
